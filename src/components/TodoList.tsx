@@ -1,67 +1,47 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { useAppSelector } from "../hooks/useAppSelector";
-import { useAppDispatch } from "../hooks/useAppDispatch";
+import React, { FC } from "react";
 import TodoItem from "./TodoItem";
-import { addTodo } from "../store/reducers/todoReducer";
-import { ITodo } from "../types/todo";
+import { ITodo, ITodos } from "../types/todo";
+import { useActions } from "../hooks/useActions";
+import { Button, styled } from "@mui/material";
+import { getFilter } from "../helperFunctions/getFilter";
+import { FilterTypes } from "../types/filter";
 
-const Wrapper = styled.div`
-  width: 300px;
-  -webkit-box-shadow: 5px 5px 25px 5px rgba(0, 0, 0, 0.7);
-  box-shadow: 5px 5px 25px 5px rgba(0, 0, 0, 0.7);
-  padding: 10px;
-`;
+interface TodoListProps {
+  todo: ITodo[];
+  filter: string;
+}
 
-const Input = styled.input`
-  width: 100%;
+const StyledButton = styled(Button)`
+  border: 1px solid black;
+  color: black;
+  margin: 10px auto;
   padding: 5px;
-  border-radius: 10px;
-  border: 1px solid #989898;
-
-  &:focus {
-    outline: none;
-    border: 1px solid #262626;
-  }
 `;
 
-const TodoList = () => {
-  const { todo } = useAppSelector((state) => state.todo);
-  const dispatch = useAppDispatch();
-
-  const [inputValue, setInputValue] = useState("");
-
-  const handleAddTodo = () => {
-    if (!inputValue) return;
-    const newTodo: ITodo = {
-      id: Date.now(),
-      title: inputValue,
-      isCompleted: false,
-      isChecked: false,
-    };
-    dispatch(addTodo(newTodo));
-    setInputValue("");
-  };
+const TodoList: FC<TodoListProps> = ({ todo, filter }) => {
+  const { removeCompletedTodos } = useActions();
+  console.log(filter);
 
   return (
-    <Wrapper>
-      <h1>TodoList</h1>
-      {todo.map((todo, index) => (
-        <TodoItem
-          key={todo.id}
-          id={todo.id}
-          title={todo.title}
-          isChecked={todo.isChecked}
-          isCompleted={todo.isCompleted}
-        />
-      ))}
-      <Input
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        type="text"
-      />
-      <button onClick={handleAddTodo}>ADD</button>
-    </Wrapper>
+    <div>
+      {filter === FilterTypes.Removed && (
+        <StyledButton onClick={() => removeCompletedTodos(todo)}>
+          Remove All
+        </StyledButton>
+      )}
+      {todo?.map(
+        (elem, index) =>
+          getFilter(elem, filter) && (
+            <TodoItem
+              key={elem.id}
+              id={elem.id}
+              title={elem.title}
+              isChecked={elem.isChecked}
+              isCompleted={elem.isCompleted}
+            />
+          )
+      )}
+    </div>
   );
 };
 

@@ -4,3 +4,6 @@ export interface ITodo {
   isCompleted: boolean;
   isChecked: boolean;
 }
+export interface ITodos {
+  todo: ITodo[];
+}
