@@ -21,6 +21,7 @@ const Input = styled.input`
   padding: 5px;
   border-radius: 10px;
   border: 1px solid #989898;
+  height: 31px;
 
   &:focus {
     outline: none;
@@ -65,6 +66,7 @@ const App = () => {
       />
       <TodoList filter={menuOptions[selectedIndexMenu]} todo={todo} />
       <Input
+        placeholder={"Add new ToDo"}
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         type="text"
